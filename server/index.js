@@ -21,11 +21,11 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const brokerUrl =  process.env.BROKER_URL
-const clientId =  process.env.CLIENT_ID
-const username =  process.env.USERNAME
-const password =  process.env.PASSWORD
-const topic =  process.env.TOPIC
+const brokerUrl =  "wss://mqtt.netpie.io:443/mqtt";
+const clientId =  "1589f4d7-9026-4799-a4c8-cf5cb6cf69fb";
+const username =  "3dHteifcwturssZ57Dgj28gKMrhV6YSt";
+const password =  "zWs6BRy7mzHFhTTxj3Pa2AuNwS8F5kGh";
+const topic =  "@msg/sayhi";
 
 let latestMessage = null;
 
