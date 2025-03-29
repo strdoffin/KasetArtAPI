@@ -33,6 +33,7 @@ const client = mqtt.connect(brokerUrl, {
     clientId,
     username,
     password,
+    protocol: 'wss',
 });
 
 client.on("connect", () => {
