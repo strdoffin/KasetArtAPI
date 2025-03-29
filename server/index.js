@@ -64,7 +64,7 @@ client.on("message", async (receivedTopic, message) => {
                     { 
                         temperature: latestMessage.temp, 
                         humidity: latestMessage.humi,
-                        timestamp: new Date()
+                        timestamp: new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' })
                     }
                 ]);
 
