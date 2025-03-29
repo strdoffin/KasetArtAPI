@@ -1,0 +1,20 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "mqtt": "^5.10.4"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.7"
+  }
+}
