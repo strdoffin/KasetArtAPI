@@ -7,25 +7,29 @@ const { createClient } = require('@supabase/supabase-js');
 const app = express();
 const port = 3000;
 
-app.use(cors({
-    origin: [
-        'http://localhost:3000',
-        'http://localhost:3001',
-    ],
+// CORS Configuration
+const corsOptions = {
+    origin: process.env.NODE_ENV === 'production' 
+        ? process.env.CORS_ORIGINS.split(',')
+        : ['http://localhost:3000', 'http://localhost:3001'], // Local development origins
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
-}));
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
+// Supabase Setup
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const brokerUrl =  "wss://mqtt.netpie.io:443/mqtt";
-const clientId =  "1589f4d7-9026-4799-a4c8-cf5cb6cf69fb";
-const username =  "3dHteifcwturssZ57Dgj28gKMrhV6YSt";
-const password =  "zWs6BRy7mzHFhTTxj3Pa2AuNwS8F5kGh";
-const topic =  "@msg/sayhi";
+// MQTT Setup
+const brokerUrl = "wss://mqtt.netpie.io:443/mqtt";
+const clientId = "1589f4d7-9026-4799-a4c8-cf5cb6cf69fb";
+const username = "3dHteifcwturssZ57Dgj28gKMrhV6YSt";
+const password = "zWs6BRy7mzHFhTTxj3Pa2AuNwS8F5kGh";
+const topic = "@msg/sayhi";
 
 let latestMessage = null;
 
@@ -53,7 +57,7 @@ client.on("message", async (receivedTopic, message) => {
         try {
             latestMessage = JSON.parse(message.toString());
             console.log(`Received message:`, latestMessage);
-            
+
             const { data, error } = await supabase
                 .from('sensor_readings')
                 .insert([
@@ -63,7 +67,7 @@ client.on("message", async (receivedTopic, message) => {
                         timestamp: new Date()
                     }
                 ]);
-                
+
             if (error) {
                 console.error("Error inserting message into Supabase:", error);
             } else {
@@ -102,13 +106,13 @@ app.get("/daily-averages", async (req, res) => {
         if (error) {
             throw error;
         }
-        
+
         // Process data to calculate daily averages
         const dailyMap = new Map();
-        
+
         data.forEach(reading => {
             const date = new Date(reading.timestamp).toISOString().split('T')[0];
-            
+
             if (!dailyMap.has(date)) {
                 dailyMap.set(date, {
                     total_temp: 0,
@@ -116,13 +120,13 @@ app.get("/daily-averages", async (req, res) => {
                     count: 0
                 });
             }
-            
+
             const dayData = dailyMap.get(date);
             dayData.total_temp += reading.temperature;
             dayData.total_humi += reading.humidity;
             dayData.count += 1;
         });
-        
+
         const dailyAverages = Array.from(dailyMap.entries()).map(([date, data]) => {
             return {
                 date,
@@ -130,7 +134,7 @@ app.get("/daily-averages", async (req, res) => {
                 avg_humi: data.total_humi / data.count
             };
         });
-        
+
         res.json(dailyAverages);
     } catch (error) {
         console.error("Error fetching daily averages:", error);
