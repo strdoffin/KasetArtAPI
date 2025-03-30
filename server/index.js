@@ -99,7 +99,7 @@ app.get("/daily-averages", async (req, res) => {
         const { data, error } = await supabase
             .from('sensor_readings')
             .select('timestamp, temperature, humidity')
-            .order('timestamp', { ascending: false });
+            .order('timestamp', { ascending: true });
         if (error) {
             throw error;
         }
