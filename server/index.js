@@ -83,9 +83,6 @@ client.on("error", (err) => {
     console.error("MQTT client error:", err);
 });
 
-client.on("close", () => {
-    console.log("Connection to MQTT broker closed");
-});
 
 // API endpoints
 app.get("/data", (req, res) => {
