@@ -97,7 +97,7 @@ app.get("/dailyavg", async (req, res) => {
         const { data, error } = await supabase
             .from('daily_averages')
             .select('*')
-            .order('date', { ascending: false });
+            .order('date', { ascending: true });
 
         if (error) throw error;
 
