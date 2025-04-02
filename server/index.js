@@ -92,47 +92,16 @@ app.get("/data", (req, res) => {
         res.status(404).json({ error: "No data received yet" });
     }
 });
-
-// Endpoint to get daily averages
-app.get("/daily-averages", async (req, res) => {
+app.get("/dailyavg", async (req, res) => {
     try {
         const { data, error } = await supabase
-            .from('sensor_readings')
-            .select('timestamp, temperature, humidity')
-            .order('timestamp', { ascending: true });
-        if (error) {
-            throw error;
-        }
+            .from('daily_averages')
+            .select('*')
+            .order('date', { ascending: false });
 
-        // Process data to calculate daily averages
-        const dailyMap = new Map();
+        if (error) throw error;
 
-        data.forEach(reading => {
-            const date = new Date(reading.timestamp).toISOString().split('T')[0];
-
-            if (!dailyMap.has(date)) {
-                dailyMap.set(date, {
-                    total_temp: 0,
-                    total_humi: 0,
-                    count: 0
-                });
-            }
-
-            const dayData = dailyMap.get(date);
-            dayData.total_temp += reading.temperature;
-            dayData.total_humi += reading.humidity;
-            dayData.count += 1;
-        });
-
-        const dailyAverages = Array.from(dailyMap.entries()).map(([date, data]) => {
-            return {
-                date,
-                avg_temp: data.total_temp / data.count,
-                avg_humi: data.total_humi / data.count
-            };
-        });
-
-        res.json(dailyAverages);
+        res.json(data);
     } catch (error) {
         console.error("Error fetching daily averages:", error);
         res.status(500).json({ error: "Failed to fetch daily averages" });
